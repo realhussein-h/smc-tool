@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0050)file:///C:/Users/pc/Downloads/smc_gbpusd_tool.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GBP/USD — SMC Trading Tool</title>
 <style>
@@ -362,7 +362,7 @@
     .price-big { font-size: 18px; }
   }
 </style>
-</head>
+<style type="text/css" id="operaUserStyle"></style></head>
 <body>
 
 <!-- Top bar -->
@@ -373,8 +373,8 @@
     <div class="live-label">LIVE</div>
   </div>
   <div class="price-display">
-    <div class="price-big" id="live-price">1.2634</div>
-    <div class="price-pip" id="price-pip">+12 pips today</div>
+    <div class="price-big" id="live-price" style="color: var(--green);">1.2642</div>
+    <div class="price-pip" id="price-pip" style="color: var(--green);">+20 pips today</div>
   </div>
 </div>
 
@@ -410,11 +410,11 @@
       <div class="rsi-meter">
         <div class="rsi-header">
           <span style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">Current</span>
-          <span class="rsi-num" id="rsi-num">54.2</span>
+          <span class="rsi-num" id="rsi-num" style="color: var(--amber);">49.9</span>
         </div>
         <div class="rsi-track">
           <div class="rsi-fill" style="width:100%"></div>
-          <div class="rsi-needle" id="rsi-needle" style="left:54.2%"></div>
+          <div class="rsi-needle" id="rsi-needle" style="left: 49.8096%;"></div>
         </div>
         <div class="rsi-labels">
           <span>30</span><span>50</span><span>70</span>
@@ -435,7 +435,7 @@
         </div>
         <div class="level-row cur">
           <div><div class="level-type">PRICE</div><div style="font-size:10px;color:var(--accent)">Now</div></div>
-          <div class="level-price" id="cur-price-side">1.2634</div>
+          <div class="level-price" id="cur-price-side">1.2642</div>
         </div>
         <div class="level-row sup">
           <div><div class="level-type">SUP 1</div><div style="font-size:10px;color:var(--muted)">FVG Zone</div></div>
@@ -454,21 +454,21 @@
   <div class="main">
 
     <div class="tabbar">
-      <button class="tabbar-btn active" onclick="switchTab('chart', this)">Chart & Analysis</button>
-      <button class="tabbar-btn" onclick="switchTab('ai', this)">AI Coach</button>
-      <button class="tabbar-btn" onclick="switchTab('log', this)">Trade Log</button>
+      <button class="tabbar-btn active" onclick="switchTab(&#39;chart&#39;, this)">Chart &amp; Analysis</button>
+      <button class="tabbar-btn" onclick="switchTab(&#39;ai&#39;, this)">AI Coach</button>
+      <button class="tabbar-btn" onclick="switchTab(&#39;log&#39;, this)">Trade Log</button>
     </div>
 
     <!-- Chart Tab -->
     <div class="tab-panel active" id="tab-chart">
       <div class="chart-panel">
         <div class="tf-btns">
-          <button class="tf-btn" onclick="setTf('M1',this)">M1</button>
-          <button class="tf-btn" onclick="setTf('M15',this)">M15</button>
-          <button class="tf-btn active" onclick="setTf('H1',this)">H1</button>
+          <button class="tf-btn" onclick="setTf(&#39;M1&#39;,this)">M1</button>
+          <button class="tf-btn" onclick="setTf(&#39;M15&#39;,this)">M15</button>
+          <button class="tf-btn" onclick="setTf(&#39;H1&#39;,this)">H1</button>
         </div>
         <div class="chart-wrap">
-          <canvas id="priceChart"></canvas>
+          <canvas id="priceChart" width="597" height="254" style="width: 597px; height: 254px;"></canvas>
         </div>
         <div class="confluence-box">
           <div class="signal-header">
@@ -495,15 +495,15 @@
           <div class="msg bot">Hey — I'm your SMC trading coach for GBP/USD. I understand multi-timeframe analysis, Smart Money Concepts, and I'm here to learn your specific edge. Tell me your confluences and I'll help you analyze setups in real time.</div>
         </div>
         <div class="quick-prompts">
-          <button class="qp-btn" onclick="quickSend('Analyze the current H1 structure and tell me the bias')">H1 structure</button>
-          <button class="qp-btn" onclick="quickSend('Is there a valid BOS or CHoCH on the M15?')">BOS / CHoCH</button>
-          <button class="qp-btn" onclick="quickSend('What FVG zones should I be watching on GBP/USD right now?')">FVG zones</button>
-          <button class="qp-btn" onclick="quickSend('Give me a full SMC checklist for a long entry')">Long checklist</button>
-          <button class="qp-btn" onclick="quickSend('Where is the liquidity sitting above and below current price?')">Liquidity map</button>
-          <button class="qp-btn" onclick="quickSend('Analyze my trade log and find patterns in my winning setups')">Analyze log</button>
+          <button class="qp-btn" onclick="quickSend(&#39;Analyze the current H1 structure and tell me the bias&#39;)">H1 structure</button>
+          <button class="qp-btn" onclick="quickSend(&#39;Is there a valid BOS or CHoCH on the M15?&#39;)">BOS / CHoCH</button>
+          <button class="qp-btn" onclick="quickSend(&#39;What FVG zones should I be watching on GBP/USD right now?&#39;)">FVG zones</button>
+          <button class="qp-btn" onclick="quickSend(&#39;Give me a full SMC checklist for a long entry&#39;)">Long checklist</button>
+          <button class="qp-btn" onclick="quickSend(&#39;Where is the liquidity sitting above and below current price?&#39;)">Liquidity map</button>
+          <button class="qp-btn" onclick="quickSend(&#39;Analyze my trade log and find patterns in my winning setups&#39;)">Analyze log</button>
         </div>
         <div class="ai-input-wrap">
-          <input class="ai-input" id="ai-input" placeholder="Describe your setup, ask a question, or teach me your confluences..." onkeydown="if(event.key==='Enter')sendMsg()" />
+          <input class="ai-input" id="ai-input" placeholder="Describe your setup, ask a question, or teach me your confluences..." onkeydown="if(event.key===&#39;Enter&#39;)sendMsg()">
           <button class="ai-send" onclick="sendMsg()">Send</button>
         </div>
       </div>
@@ -572,7 +572,7 @@
         </table>
         <div class="log-actions">
           <button class="log-btn primary" onclick="logNewTrade()">+ Log trade</button>
-          <button class="log-btn" onclick="goAI('Analyze my trade log. Find patterns: which confluences appear in my winning trades vs losing trades? What should I focus on?')">AI analysis</button>
+          <button class="log-btn" onclick="goAI(&#39;Analyze my trade log. Find patterns: which confluences appear in my winning trades vs losing trades? What should I focus on?&#39;)">AI analysis</button>
         </div>
       </div>
     </div>
@@ -581,6 +581,7 @@
 </div>
 
 <script>
+  const API_KEY = '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';
   const SYSTEM_PROMPT = `You are an advanced Forex trading coach specializing in Smart Money Concepts (SMC) for GBP/USD. The user is an experienced trader who uses multi-timeframe analysis — H1 and M15 for structure and confirmation, M1 for entry, with respect to higher timeframes (H4, Daily).
 
 Their strategy is based on Smart Money Concepts:
@@ -753,7 +754,7 @@ Be concise, direct, technical, and use proper SMC terminology throughout. Always
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
@@ -806,5 +807,6 @@ Be concise, direct, technical, and use proper SMC terminology throughout. Always
     if (currentTf) setTf(currentTf, null);
   }, 15000);
 </script>
-</body>
-</html>
+
+
+</body></html>
