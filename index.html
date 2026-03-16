@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_5.html -->
+<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_7.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -207,6 +207,7 @@
             <button class="qpbtn" onclick="quickAsk(&#39;Are there valid M15 POIs forming right now?&#39;)">M15 POIs</button>
             <button class="qpbtn" onclick="quickAsk(&#39;Is there a valid setup forming right now based on my strategy?&#39;)">Any setup now?</button>
             <button class="qpbtn" onclick="quickAsk(&#39;Analyze my trade log and find patterns in winning vs losing trades&#39;)">Analyze log</button>
+            <button class="qpbtn" onclick="saveBrainToNotion(strategyBrain)" style="border-color:var(--amber);color:var(--amber)">Save brain ✓</button>
           </div>
           <div class="ai-inputrow">
             <input class="ai-input" id="ai-input" placeholder="Describe a setup or ask anything..." onkeydown="if(event.key===&#39;Enter&#39;)sendAI()">
@@ -246,7 +247,53 @@
 </div>
 
 <script>
-const TWELVE_KEY = '1097c8a5e479441dba4aeb7269e06558';
+const NOTION_PAGE_ID = '32548d488391805a9aecd049f3680e0f';
+let strategyBrain = '';
+let sessionNotes = [];
+
+async function loadBrainFromNotion() {
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: 'You are a helpful assistant with access to Notion. Read the content of the given Notion page and return it as plain text exactly as written. If the page is empty return the text: EMPTY',
+        messages: [{ role: 'user', content: `Read this Notion page and return its full content: https://www.notion.so/${NOTION_PAGE_ID}` }],
+        mcp_servers: [{ type: 'url', url: 'https://mcp.notion.com/mcp', name: 'notion-mcp' }]
+      })
+    });
+    const data = await resp.json();
+    const content = data.content?.find(b => b.type === 'text')?.text || '';
+    if (content && !content.includes('EMPTY')) {
+      strategyBrain = content;
+      addMsg('Brain loaded from Notion ✓ — ' + content.split('\n').filter(l => l.trim()).length + ' notes remembered.', 'bot');
+    } else {
+      strategyBrain = '';
+      addMsg('SMC Brain is empty — start teaching me and I\'ll remember everything.', 'bot');
+    }
+  } catch(e) {
+    addMsg('Could not load brain from Notion. Starting fresh this session.', 'bot');
+  }
+}
+
+async function saveBrainToNotion(newContent) {
+  try {
+    await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        system: 'You have access to Notion. Your job is to update a Notion page with the content provided. Replace all existing content with the new content.',
+        messages: [{ role: 'user', content: `Update the Notion page with ID ${NOTION_PAGE_ID} and replace its content with this:\n\n${newContent}` }],
+        mcp_servers: [{ type: 'url', url: 'https://mcp.notion.com/mcp', name: 'notion-mcp' }]
+      })
+    });
+    addMsg('Brain saved to Notion ✓', 'bot');
+  } catch(e) {}
+}
 const CAPITAL = 100000;
 const RISK_AMT = 500; // 0.5%
 
@@ -270,14 +317,16 @@ function unlock() {
 
 async function initApp() {
   await fetchPrice();
-  await loadChart('1h', document.querySelectorAll('.tfbtn')[2]);
-  scanMarket();
-  setInterval(fetchPrice, 15000);
+  setTimeout(() => loadChart('1h', document.querySelectorAll('.tfbtn')[2]), 2000);
+  setTimeout(() => scanMarket(), 8000);
+  setInterval(fetchPrice, 30000);
   setInterval(() => {
     scanTimer--;
     document.getElementById('scan-countdown').textContent = scanTimer + 's';
     if (scanTimer <= 0) { scanTimer = 60; scanMarket(); }
   }, 1000);
+  // Load brain from Notion
+  setTimeout(() => loadBrainFromNotion(), 1000);
 }
 
 async function fetchPrice() {
@@ -294,8 +343,14 @@ async function fetchPrice() {
       document.getElementById('price-change').style.color = pip >= 0 ? 'var(--green)' : 'var(--red)';
       document.getElementById('l-cur').textContent = livePrice.toFixed(4);
       updateLevels();
+    } else {
+      document.getElementById('price-change').textContent = d.message || 'Rate limit — retrying...';
+      document.getElementById('price-change').style.color = 'var(--amber)';
     }
-  } catch(e) {}
+  } catch(e) {
+    document.getElementById('price-change').textContent = 'Connection error';
+    document.getElementById('price-change').style.color = 'var(--red)';
+  }
 }
 
 async function loadChart(tf, btn) {
@@ -390,12 +445,12 @@ async function scanMarket() {
   if (scanning || !livePrice) return;
   scanning = true;
   try {
-    // Fetch fresh M1 and M15
-    const [r1, r2] = await Promise.all([
-      fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=1min&outputsize=30&apikey=${TWELVE_KEY}`),
-      fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=15min&outputsize=20&apikey=${TWELVE_KEY}`)
-    ]);
-    const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
+    // Fetch M1 first, then M15 with a delay
+    const r1 = await fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=1min&outputsize=30&apikey=${TWELVE_KEY}`);
+    const d1 = await r1.json();
+    await new Promise(res => setTimeout(res, 1500));
+    const r2 = await fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=15min&outputsize=20&apikey=${TWELVE_KEY}`);
+    const d2 = await r2.json();
     if (!d1.values || !d2.values) { scanning = false; return; }
     const m1 = d1.values.reverse().map(v => ({o:+v.open,h:+v.high,l:+v.low,c:+v.close}));
     const m15 = d2.values.reverse().map(v => ({o:+v.open,h:+v.high,l:+v.low,c:+v.close}));
@@ -576,19 +631,59 @@ async function sendAI() {
   if (!text) return;
   input.value = '';
   addMsg(text, 'user');
-  const thinking = addMsg('Analyzing...', 'think');
+  sessionNotes.push(text);
+  const thinking = addMsg('Thinking...', 'think');
+
+  const brainContext = strategyBrain ? `\n\n## WHAT YOU HAVE LEARNED SO FAR (from previous sessions):\n${strategyBrain}` : '';
+
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYSTEM_PROMPT, messages: [...aiMessages, {role:'user',content:text}] })
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT + brainContext,
+        messages: [...aiMessages, { role: 'user', content: text }]
+      })
     });
     const data = await resp.json();
-    const reply = data.content?.find(b => b.type==='text')?.text || 'No response.';
-    thinking.remove(); addMsg(reply, 'bot');
-    aiMessages.push({role:'user',content:text}); aiMessages.push({role:'assistant',content:reply});
+    if (!resp.ok) { thinking.remove(); addMsg('API error ' + resp.status + ': ' + (data.error?.message || JSON.stringify(data)), 'bot'); return; }
+    const reply = data.content?.find(b => b.type === 'text')?.text || 'No response.';
+    thinking.remove();
+    addMsg(reply, 'bot');
+    aiMessages.push({ role: 'user', content: text });
+    aiMessages.push({ role: 'assistant', content: reply });
     if (aiMessages.length > 20) aiMessages = aiMessages.slice(-20);
-  } catch(e) { thinking.remove(); addMsg('Connection error.', 'bot'); }
+
+    // Auto-save to Notion if user seems to be teaching something new
+    const teachingKeywords = ['remember', 'note', 'important', 'rule', 'condition', 'when', 'if', 'always', 'never', 'i noticed', 'i found', 'add this', 'update'];
+    const isTeaching = teachingKeywords.some(k => text.toLowerCase().includes(k));
+    if (isTeaching) {
+      await updateAndSaveBrain(text, reply);
+    }
+  } catch(e) { thinking.remove(); addMsg('Network error: ' + e.message, 'bot'); }
+}
+
+async function updateAndSaveBrain(userNote, aiReply) {
+  try {
+    const updateResp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: 'You are updating a trading strategy knowledge base. Given the existing brain content and a new note from the trader, merge the new knowledge into the existing content. Keep it organized, clear, and concise. Format as bullet points grouped by topic. Do not remove existing knowledge — only add or refine. Return only the updated brain content, nothing else.',
+        messages: [{ role: 'user', content: `EXISTING BRAIN:\n${strategyBrain || '(empty)'}\n\nNEW NOTE FROM TRADER:\n${userNote}\n\nAI UNDERSTANDING:\n${aiReply}\n\nReturn the updated brain:` }]
+      })
+    });
+    const updateData = await updateResp.json();
+    const updatedBrain = updateData.content?.find(b => b.type === 'text')?.text;
+    if (updatedBrain) {
+      strategyBrain = updatedBrain;
+      await saveBrainToNotion(updatedBrain);
+    }
+  } catch(e) {}
 }
 
 function addMsg(text, type) {
