@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_9.html -->
+<!-- saved from url=(0040)file:///C:/Users/pc/Downloads/index.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GBP/USD — SMC Trading Tool</title>
+<title>SMC Trading Dashboard</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap');
   :root {
@@ -15,62 +15,90 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:var(--font-ui);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+  /* Lock */
   #lockscreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
   .lock-title{font-size:24px;font-weight:700;}
   .lock-sub{font-size:13px;color:var(--muted);}
   .lock-input{width:340px;max-width:90vw;padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;}
   .lock-btn{padding:11px 36px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-ui);}
   .lock-err{font-size:12px;color:var(--red);display:none;}
+
+  /* App */
   #app{display:none;flex-direction:column;flex:1;}
+
+  /* Topbar */
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px;}
   .pair{font-size:18px;font-weight:700;}
-  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  .bot-status{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);}
+  .status-dot{width:7px;height:7px;border-radius:50%;}
+  .status-dot.on{background:var(--green);animation:pulse 2s infinite;}
+  .status-dot.off{background:var(--red);}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
-  .price-big{font-family:var(--font-mono);font-size:22px;font-weight:500;}
-  .price-change{font-size:11px;font-family:var(--font-mono);}
-  .account-badge{font-size:12px;font-family:var(--font-mono);color:var(--muted);background:var(--bg3);padding:5px 12px;border-radius:20px;border:1px solid var(--border);}
-  .layout{display:grid;grid-template-columns:240px 1fr;flex:1;min-height:0;}
-  .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
-  .sec-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-  .bias-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-  .bias-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 10px;}
-  .bias-lbl{font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:3px;}
-  .bias-val{font-size:12px;font-weight:600;}
-  .bull{color:var(--green);}.bear{color:var(--red);}.neutral{color:var(--amber);}
-  .levels-list{display:flex;flex-direction:column;gap:3px;}
-  .lrow{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;font-size:11px;}
-  .lrow.res{background:rgba(239,68,68,.08);}
-  .lrow.cur{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);}
-  .lrow.sup{background:rgba(34,197,94,.06);}
-  .ltype{color:var(--muted);font-size:10px;font-family:var(--font-mono);}
-  .lprice{font-family:var(--font-mono);font-size:11px;font-weight:500;}
-  .lrow.res .lprice{color:var(--red);}.lrow.cur .lprice{color:var(--accent);}.lrow.sup .lprice{color:var(--green);}
-  .status-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;}
-  .status-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;}
-  .status-row:last-child{margin-bottom:0;}
+  .balance-big{font-family:var(--font-mono);font-size:20px;font-weight:500;}
+  .equity-small{font-size:11px;color:var(--muted);font-family:var(--font-mono);}
+
+  /* Layout */
+  .layout{display:grid;grid-template-columns:260px 1fr;flex:1;min-height:0;}
+
+  /* Sidebar */
+  .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+  .sec-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+
+  /* Stats grid */
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;}
+  .stat-lbl{font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;}
+  .stat-val{font-size:15px;font-weight:600;}
+  .green{color:var(--green);}.red{color:var(--red);}.amber{color:var(--amber);}
+
+  /* Settings panel */
+  .settings-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;}
+  .setting-row{display:flex;flex-direction:column;gap:4px;}
+  .setting-lbl{font-size:11px;color:var(--muted);font-family:var(--font-mono);}
+  .setting-input{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:var(--font-mono);outline:none;width:100%;}
+  .setting-input:focus{border-color:var(--accent);}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;}
+  .toggle{position:relative;width:36px;height:20px;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-slider{position:absolute;inset:0;background:var(--bg4);border-radius:20px;cursor:pointer;transition:.2s;}
+  .toggle-slider:before{content:"";position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:.2s;}
+  .toggle input:checked + .toggle-slider{background:var(--accent);}
+  .toggle input:checked + .toggle-slider:before{transform:translateX(16px);background:#fff;}
+  .save-btn{padding:8px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-ui);width:100%;}
+  .save-btn:hover{opacity:.85;}
+
+  /* Open positions */
+  .positions-list{display:flex;flex-direction:column;gap:5px;}
+  .pos-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 11px;}
+  .pos-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+  .pos-dir{font-size:12px;font-weight:600;}
+  .pos-pnl{font-size:13px;font-weight:600;font-family:var(--font-mono);}
+  .pos-detail{font-size:10px;color:var(--muted);font-family:var(--font-mono);}
+  .no-positions{font-size:12px;color:var(--muted);text-align:center;padding:12px 0;}
+
+  /* Main */
   .main{display:flex;flex-direction:column;overflow:hidden;}
   .tabbar{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);padding:0 16px;}
   .tabbtn{padding:11px 16px;font-size:12px;font-weight:500;color:var(--muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--font-ui);transition:all .15s;white-space:nowrap;}
   .tabbtn:hover{color:var(--text);}.tabbtn.active{color:var(--text);border-bottom-color:var(--accent);}
   .tab-panel{display:none;flex:1;overflow:hidden;flex-direction:column;}
   .tab-panel.active{display:flex;}
-  .chart-panel{flex:1;padding:14px;overflow-y:auto;}
-  .tf-btns{display:flex;gap:5px;margin-bottom:10px;}
-  .tfbtn{padding:4px 12px;font-size:11px;font-family:var(--font-mono);border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;}
-  .tfbtn:hover,.tfbtn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;height:260px;position:relative;overflow:hidden;margin-bottom:12px;}
-  .signal-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;}
-  .sig-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-  .sig-name{font-size:13px;font-weight:500;}
-  .sig-badge{font-size:10px;font-family:var(--font-mono);font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.04em;}
-  .sig-badge.wait{background:rgba(245,158,11,.15);color:var(--amber);}
-  .sig-badge.buy{background:rgba(34,197,94,.15);color:var(--green);}
-  .sig-badge.sell{background:rgba(239,68,68,.15);color:var(--red);}
-  .conf-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-  .conf-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
-  .conf-item.on{color:var(--text);}
-  .cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-  .cdot.g{background:var(--green);}.cdot.a{background:var(--amber);}.cdot.r{background:var(--red);}.cdot.x{background:var(--bg4);border:1px solid var(--border2);}
+
+  /* Trade log */
+  .log-panel{flex:1;padding:16px;overflow-y:auto;}
+  .log-empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;line-height:2;}
+  table{width:100%;border-collapse:collapse;font-size:11px;}
+  thead th{text-align:left;padding:8px;color:var(--muted);font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;border-bottom:1px solid var(--border);font-weight:500;text-transform:uppercase;}
+  tbody td{padding:8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;}
+  tbody tr:hover td{background:var(--bg2);}
+  .win{color:var(--green);font-weight:600;}.loss{color:var(--red);font-weight:600;}.open-t{color:var(--amber);font-weight:600;}
+  .dlong{color:var(--green);}.dshort{color:var(--red);}
+  .log-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .logbtn{padding:7px 14px;font-size:12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg2);color:var(--text);cursor:pointer;font-family:var(--font-ui);}
+  .logbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  /* AI */
   .ai-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
   .ai-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
   .msg{max-width:78%;line-height:1.6;font-size:13px;padding:10px 13px;border-radius:10px;}
@@ -85,32 +113,24 @@
   .ai-input:focus{border-color:var(--accent);}
   .ai-input::placeholder{color:var(--muted);}
   .ai-send{padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-ui);}
-  .log-panel{flex:1;padding:16px;overflow-y:auto;}
-  .log-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px;}
-  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
-  .stat-lbl{font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:3px;}
-  .stat-val{font-size:18px;font-weight:700;}
-  .log-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:1.8;}
-  table{width:100%;border-collapse:collapse;font-size:11px;}
-  thead th{text-align:left;padding:7px 8px;color:var(--muted);font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;border-bottom:1px solid var(--border);font-weight:500;text-transform:uppercase;}
-  tbody td{padding:8px 8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;}
-  tbody tr:hover td{background:var(--bg2);}
-  .win{color:var(--green);font-weight:600;}.loss{color:var(--red);font-weight:600;}.open{color:var(--amber);font-weight:600;}
-  .dlong{color:var(--green);}.dshort{color:var(--red);}
-  .log-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-  .logbtn{padding:7px 14px;font-size:12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg2);color:var(--text);cursor:pointer;font-family:var(--font-ui);}
-  .logbtn:hover{border-color:var(--accent);}
-  .logbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  /* Scan log */
+  .scan-panel{flex:1;padding:16px;overflow-y:auto;}
+  .scan-entry{font-size:12px;font-family:var(--font-mono);padding:6px 0;border-bottom:1px solid var(--border);color:var(--muted);}
+  .scan-entry .time{color:var(--accent);margin-right:8px;}
+  .scan-entry.ok{color:var(--green);}
+  .scan-entry.warn{color:var(--amber);}
+
   ::-webkit-scrollbar{width:3px;height:3px;}
   ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-  @media(max-width:700px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.log-stats{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:700px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
 </style>
 <style type="text/css" id="operaUserStyle"></style></head>
 <body>
 
 <div id="lockscreen">
-  <div class="lock-title">SMC Trading Tool</div>
-  <div class="lock-sub">GBP/USD · Smart Money Concepts · Live</div>
+  <div class="lock-title">SMC Trading Dashboard</div>
+  <div class="lock-sub">GBP/USD · Hussein Hammoodi Strategy</div>
   <input class="lock-input" id="key-input" type="password" placeholder="Enter your Anthropic API key (sk-ant-...)" onkeydown="if(event.key===&#39;Enter&#39;)unlock()">
   <button class="lock-btn" onclick="unlock()">Unlock</button>
   <div class="lock-err" id="key-err">Invalid key — must start with sk-ant-</div>
@@ -118,513 +138,343 @@
 
 <div id="app">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div class="pair">GBP/USD</div>
-      <div class="live-dot"></div>
-      <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono);">LIVE</span>
-    </div>
     <div style="display:flex;align-items:center;gap:16px;">
-      <div class="account-badge" id="account-display">$100,000</div>
-      <div style="text-align:right;">
-        <div class="price-big" id="live-price" style="color:var(--green);">—</div>
-        <div class="price-change" id="price-change" style="color:var(--muted);">Loading...</div>
+      <div class="pair">GBP/USD</div>
+      <div class="bot-status">
+        <div class="status-dot off" id="bot-dot"></div>
+        <span id="bot-status-text" style="color:var(--muted)">Bot offline</span>
       </div>
+      <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);" id="last-scan">Last scan: —</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="balance-big" id="balance-display" style="color:var(--green);">$—</div>
+      <div class="equity-small">Equity: <span id="equity-display">$—</span> · Profit: <span id="profit-display">$—</span></div>
     </div>
   </div>
 
   <div class="layout">
     <div class="sidebar">
+
+      <!-- Account stats -->
       <div>
-        <div class="sec-label">HTF Bias</div>
-        <div class="bias-grid">
-          <div class="bias-card"><div class="bias-lbl">Daily</div><div class="bias-val neutral" id="b-daily">—</div></div>
-          <div class="bias-card"><div class="bias-lbl">H4</div><div class="bias-val neutral" id="b-h4">—</div></div>
-          <div class="bias-card"><div class="bias-lbl">H1</div><div class="bias-val neutral" id="b-h1">—</div></div>
-          <div class="bias-card"><div class="bias-lbl">M15</div><div class="bias-val neutral" id="b-m15">—</div></div>
+        <div class="sec-label">Performance</div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-lbl">WIN RATE</div><div class="stat-val green" id="s-winrate">—</div></div>
+          <div class="stat-card"><div class="stat-lbl">TOTAL P&amp;L</div><div class="stat-val" id="s-pnl">$0</div></div>
+          <div class="stat-card"><div class="stat-lbl">AVG RR</div><div class="stat-val amber" id="s-rr">—</div></div>
+          <div class="stat-card"><div class="stat-lbl">TRADES</div><div class="stat-val" id="s-trades" style="color:var(--text)">0</div></div>
         </div>
       </div>
+
+      <!-- Bot settings -->
       <div>
-        <div class="sec-label">Key Levels</div>
-        <div class="levels-list">
-          <div class="lrow res"><div><div class="ltype">RES 2</div><div style="font-size:9px;color:var(--muted)">Liquidity</div></div><div class="lprice" id="l-r2">—</div></div>
-          <div class="lrow res"><div><div class="ltype">RES 1</div><div style="font-size:9px;color:var(--muted)">Supply OB</div></div><div class="lprice" id="l-r1">—</div></div>
-          <div class="lrow cur"><div><div class="ltype">PRICE</div><div style="font-size:9px;color:var(--accent)">Now</div></div><div class="lprice" id="l-cur">—</div></div>
-          <div class="lrow sup"><div><div class="ltype">SUP 1</div><div style="font-size:9px;color:var(--muted)">Demand FVG</div></div><div class="lprice" id="l-s1">—</div></div>
-          <div class="lrow sup"><div><div class="ltype">SUP 2</div><div style="font-size:9px;color:var(--muted)">EQL Lows</div></div><div class="lprice" id="l-s2">—</div></div>
+        <div class="sec-label">Bot Settings</div>
+        <div class="settings-box">
+          <div class="setting-row">
+            <div class="setting-lbl">Risk per trade (%)</div>
+            <input class="setting-input" id="set-risk" type="number" min="0.1" max="5" step="0.1" value="0.5">
+          </div>
+          <div class="setting-row">
+            <div class="setting-lbl">Minimum RR</div>
+            <input class="setting-input" id="set-rr" type="number" min="1" max="10" step="0.5" value="2">
+          </div>
+          <div class="setting-row">
+            <div class="setting-lbl">Scan interval (seconds)</div>
+            <input class="setting-input" id="set-interval" type="number" min="30" max="300" step="10" value="60">
+          </div>
+          <div class="toggle-row">
+            <span class="setting-lbl">Trading active</span>
+            <label class="toggle">
+              <input type="checkbox" id="set-active" checked="" onchange="saveSettings()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <button class="save-btn" onclick="saveSettings()">Save Settings</button>
         </div>
       </div>
+
+      <!-- Open positions -->
       <div>
-        <div class="sec-label">Session</div>
-        <div class="status-box">
-          <div class="status-row"><span style="color:var(--muted)">Trades today</span><span id="trades-today" style="font-family:var(--font-mono)">0</span></div>
-          <div class="status-row"><span style="color:var(--muted)">Risk/trade</span><span style="font-family:var(--font-mono);color:var(--amber)">$500</span></div>
-          <div class="status-row"><span style="color:var(--muted)">Today P&amp;L</span><span id="today-pnl" style="font-family:var(--font-mono)">$0</span></div>
-          <div class="status-row"><span style="color:var(--muted)">Next scan</span><span id="scan-countdown" style="font-family:var(--font-mono);color:var(--green)">60s</span></div>
+        <div class="sec-label">Open Positions</div>
+        <div class="positions-list" id="positions-list">
+          <div class="no-positions">No open positions</div>
         </div>
       </div>
+
     </div>
 
     <div class="main">
       <div class="tabbar">
-        <button class="tabbtn active" onclick="switchTab(&#39;chart&#39;,this)">Live Chart</button>
+        <button class="tabbtn active" onclick="switchTab(&#39;log&#39;,this)">Trade Log</button>
         <button class="tabbtn" onclick="switchTab(&#39;ai&#39;,this)">AI Coach</button>
-        <button class="tabbtn" onclick="switchTab(&#39;log&#39;,this)" id="log-tab-btn">Trade Log</button>
+        <button class="tabbtn" onclick="switchTab(&#39;scan&#39;,this)">Scan Log</button>
       </div>
 
-      <div class="tab-panel active" id="tab-chart">
-        <div class="chart-panel">
-          <div class="tf-btns">
-            <button class="tfbtn" onclick="loadChart(&#39;1min&#39;,this)">M1</button>
-            <button class="tfbtn" onclick="loadChart(&#39;15min&#39;,this)">M15</button>
-            <button class="tfbtn active" onclick="loadChart(&#39;1h&#39;,this)">H1</button>
+      <!-- Trade Log -->
+      <div class="tab-panel active" id="tab-log">
+        <div class="log-panel">
+          <div id="log-empty" class="log-empty">
+            No trades yet.<br>
+            The bot is scanning every 60 seconds.<br>
+            When all SMC conditions are met a trade will appear here automatically.
           </div>
-          <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
-          <div class="signal-box">
-            <div class="sig-header">
-              <div class="sig-name" id="sig-name">Initializing scanner...</div>
-              <div class="sig-badge wait" id="sig-badge">LOADING</div>
-            </div>
-            <div class="sec-label" style="margin-bottom:6px;">SMC Confluence</div>
-            <div class="conf-grid">
-              <div class="conf-item" id="c1"><div class="cdot x"></div><span>H1 bias clear</span></div>
-              <div class="conf-item" id="c2"><div class="cdot x"></div><span>M15 POI reached</span></div>
-              <div class="conf-item" id="c3"><div class="cdot x"></div><span>M1 trend in POI</span></div>
-              <div class="conf-item" id="c4"><div class="cdot x"></div><span>CHoCH formed</span></div>
-              <div class="conf-item" id="c5"><div class="cdot x"></div><span>Confirmation candle</span></div>
-              <div class="conf-item" id="c6"><div class="cdot x"></div><span>RR ≥ 1:2</span></div>
-            </div>
+          <div id="log-table-wrap" style="display:none;">
+            <table>
+              <thead><tr><th>Time</th><th>Dir</th><th>Entry (Limit)</th><th>SL</th><th>BE</th><th>TP</th><th>RR</th><th>Lots</th><th>Risk $</th><th>P&amp;L</th><th>Status</th></tr></thead>
+              <tbody id="log-body"></tbody>
+            </table>
+          </div>
+          <div class="log-actions">
+            <button class="logbtn primary" onclick="exportCSV()">Export CSV</button>
+            <button class="logbtn" onclick="refreshData()">Refresh</button>
           </div>
         </div>
       </div>
 
+      <!-- AI Coach -->
       <div class="tab-panel" id="tab-ai">
         <div class="ai-panel">
           <div class="ai-msgs" id="ai-msgs">
-            <div class="msg bot">SMC engine active. Your strategy is locked in — H1 bias → M15 POI → M1 CHoCH + confirmation candle. Scanning GBP/USD every 60 seconds. Valid setups are logged automatically with entry, SL, TP, RR, and P&amp;L tracked on $100k capital at 0.5% risk per trade.</div>
+            <div class="msg bot">SMC AI Coach active. Your strategy is locked in — H1 bias → M15 POI → M1 CHoCH + confirmation candle + limit order entry. The bot is running autonomously. Ask me anything about your strategy, current setups, or trade analysis.</div>
           </div>
           <div class="qprompts">
             <button class="qpbtn" onclick="quickAsk(&#39;What is the current H1 structure and bias on GBP/USD?&#39;)">H1 bias</button>
-            <button class="qpbtn" onclick="quickAsk(&#39;Are there valid M15 POIs forming right now?&#39;)">M15 POIs</button>
-            <button class="qpbtn" onclick="quickAsk(&#39;Is there a valid setup forming right now based on my strategy?&#39;)">Any setup now?</button>
-            <button class="qpbtn" onclick="quickAsk(&#39;Analyze my trade log and find patterns in winning vs losing trades&#39;)">Analyze log</button>
-            <button class="qpbtn" onclick="saveBrainToNotion(strategyBrain)" style="border-color:var(--amber);color:var(--amber)">Save brain ✓</button>
+            <button class="qpbtn" onclick="quickAsk(&#39;Explain my current open position and what to watch for&#39;)">Open position</button>
+            <button class="qpbtn" onclick="quickAsk(&#39;Analyze my trade history and find patterns in winning vs losing trades&#39;)">Analyze trades</button>
+            <button class="qpbtn" onclick="quickAsk(&#39;What sessions are best for my GBP/USD SMC strategy?&#39;)">Best sessions</button>
           </div>
           <div class="ai-inputrow">
-            <input class="ai-input" id="ai-input" placeholder="Describe a setup or ask anything..." onkeydown="if(event.key===&#39;Enter&#39;)sendAI()">
+            <input class="ai-input" id="ai-input" placeholder="Ask anything or teach me something new..." onkeydown="if(event.key===&#39;Enter&#39;)sendAI()">
             <button class="ai-send" onclick="sendAI()">Send</button>
           </div>
         </div>
       </div>
 
-      <div class="tab-panel" id="tab-log">
-        <div class="log-panel">
-          <div class="log-stats">
-            <div class="stat-card"><div class="stat-lbl">BALANCE</div><div class="stat-val" id="s-balance" style="font-size:14px;color:var(--text)">$100,000</div></div>
-            <div class="stat-card"><div class="stat-lbl">WIN RATE</div><div class="stat-val win" id="s-winrate">—</div></div>
-            <div class="stat-card"><div class="stat-lbl">TOTAL P&amp;L</div><div class="stat-val" id="s-pnl">$0</div></div>
-            <div class="stat-card"><div class="stat-lbl">AVG RR</div><div class="stat-val" id="s-rr" style="color:var(--amber)">—</div></div>
-          </div>
-          <div id="log-empty" class="log-empty">
-            No trades logged yet.<br><br>
-            The scanner checks GBP/USD every 60 seconds.<br>
-            When all 6 SMC conditions are met, a trade is logged automatically here.
-          </div>
-          <div id="log-table-wrap" style="display:none;">
-            <table>
-              <thead><tr><th>Time</th><th>Dir</th><th>Limit Entry</th><th>SL</th><th>BE Level</th><th>TP</th><th>RR</th><th>Risk</th><th>P&amp;L</th><th>Status</th></tr></thead>
-              <tbody id="log-body"></tbody>
-            </table>
-          </div>
-          <div class="log-actions">
-            <button class="logbtn" onclick="manualLog()">+ Manual entry</button>
-            <button class="logbtn" onclick="clearLog()">Clear log</button>
-            <button class="logbtn primary" onclick="exportLog()">Export CSV</button>
-          </div>
+      <!-- Scan Log -->
+      <div class="tab-panel" id="tab-scan">
+        <div class="scan-panel" id="scan-log">
+          <div class="scan-entry"><span class="time">—</span>Waiting for bot data...</div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
 <script>
-const NOTION_PAGE_ID = '32548d488391805a9aecd049f3680e0f';
-const TWELVE_KEY = '1097c8a5e479441dba4aeb7269e06558';
-let strategyBrain = '';
-let sessionNotes = [];
-
-async function loadBrainFromNotion() {
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        system: 'You are a helpful assistant with access to Notion. Read the content of the given Notion page and return it as plain text exactly as written. If the page is empty return the text: EMPTY',
-        messages: [{ role: 'user', content: `Read this Notion page and return its full content: https://www.notion.so/${NOTION_PAGE_ID}` }],
-        mcp_servers: [{ type: 'url', url: 'https://mcp.notion.com/mcp', name: 'notion-mcp' }]
-      })
-    });
-    const data = await resp.json();
-    const content = data.content?.find(b => b.type === 'text')?.text || '';
-    if (content && !content.includes('EMPTY')) {
-      strategyBrain = content;
-      addMsg('Brain loaded from Notion ✓ — ' + content.split('\n').filter(l => l.trim()).length + ' notes remembered.', 'bot');
-    } else {
-      strategyBrain = '';
-      addMsg('SMC Brain is empty — start teaching me and I\'ll remember everything.', 'bot');
-    }
-  } catch(e) {
-    addMsg('Could not load brain from Notion. Starting fresh this session.', 'bot');
-  }
-}
-
-async function saveBrainToNotion(newContent) {
-  try {
-    await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
-        system: 'You have access to Notion. Your job is to update a Notion page with the content provided. Replace all existing content with the new content.',
-        messages: [{ role: 'user', content: `Update the Notion page with ID ${NOTION_PAGE_ID} and replace its content with this:\n\n${newContent}` }],
-        mcp_servers: [{ type: 'url', url: 'https://mcp.notion.com/mcp', name: 'notion-mcp' }]
-      })
-    });
-    addMsg('Brain saved to Notion ✓', 'bot');
-  } catch(e) {}
-}
-const CAPITAL = 100000;
-const RISK_AMT = 500; // 0.5%
-
+const GITHUB_USER = 'realhussein-h';
+const GITHUB_REPO = 'smc-tool';
 let ANTHROPIC_KEY = '';
-let livePrice = 0, prevPrice = 0;
-let candles = {};
-let currentTf = '1h';
-let trades = [];
 let aiMessages = [];
-let accountBalance = CAPITAL;
-let scanTimer = 60;
+let trades = [];
+let scanLogs = [];
+let brainNotes = localStorage.getItem('smc_brain') || '';
 
+// ─── LOCK ──────────────────────────────────────────────────────
 function unlock() {
   const val = document.getElementById('key-input').value.trim();
   if (!val.startsWith('sk-ant-')) { document.getElementById('key-err').style.display = 'block'; return; }
   ANTHROPIC_KEY = val;
   document.getElementById('lockscreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  initApp();
+  initDashboard();
 }
 
-async function initApp() {
-  await fetchPrice();
-  setTimeout(() => loadChart('1h', document.querySelectorAll('.tfbtn')[2]), 2000);
-  setTimeout(() => scanMarket(), 8000);
-  setInterval(fetchPrice, 30000);
-  setInterval(() => {
-    scanTimer--;
-    document.getElementById('scan-countdown').textContent = scanTimer + 's';
-    if (scanTimer <= 0) { scanTimer = 60; scanMarket(); }
-  }, 1000);
-  // Load brain from Notion
-  setTimeout(() => loadBrainFromNotion(), 1000);
+// ─── INIT ──────────────────────────────────────────────────────
+function initDashboard() {
+  refreshData();
+  setInterval(refreshData, 15000); // refresh every 15 seconds
+  loadSettings();
 }
 
-async function fetchPrice() {
+// ─── FETCH FROM GITHUB ─────────────────────────────────────────
+async function fetchFromGitHub(filename) {
   try {
-    const r = await fetch(`https://api.twelvedata.com/price?symbol=GBP/USD&apikey=${TWELVE_KEY}`);
-    const d = await r.json();
-    if (d.price) {
-      prevPrice = livePrice;
-      livePrice = parseFloat(d.price);
-      const pip = prevPrice ? Math.round((livePrice - prevPrice) * 10000) : 0;
-      document.getElementById('live-price').textContent = livePrice.toFixed(4);
-      document.getElementById('live-price').style.color = livePrice >= prevPrice ? 'var(--green)' : 'var(--red)';
-      document.getElementById('price-change').textContent = (pip >= 0 ? '+' : '') + pip + ' pips';
-      document.getElementById('price-change').style.color = pip >= 0 ? 'var(--green)' : 'var(--red)';
-      document.getElementById('l-cur').textContent = livePrice.toFixed(4);
-      updateLevels();
-    } else {
-      document.getElementById('price-change').textContent = d.message || 'Rate limit — retrying...';
-      document.getElementById('price-change').style.color = 'var(--amber)';
-    }
-  } catch(e) {
-    document.getElementById('price-change').textContent = 'Connection error';
-    document.getElementById('price-change').style.color = 'var(--red)';
-  }
+    const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/data/${filename}?t=${Date.now()}`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
 }
 
-async function loadChart(tf, btn) {
-  currentTf = tf;
-  document.querySelectorAll('.tfbtn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  try {
-    const r = await fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=${tf}&outputsize=80&apikey=${TWELVE_KEY}`);
-    const d = await r.json();
-    if (d.values) {
-      const data = d.values.reverse().map(v => ({ o:+v.open,h:+v.high,l:+v.low,c:+v.close,t:v.datetime }));
-      candles[tf] = data;
-      drawChart(data);
-      if (tf === '1h') updateBias(data);
-    }
-  } catch(e) {}
-}
+// ─── REFRESH DATA ──────────────────────────────────────────────
+async function refreshData() {
+  const [status, tradesData] = await Promise.all([
+    fetchFromGitHub('status.json'),
+    fetchFromGitHub('trades.json')
+  ]);
 
-function drawChart(data) {
-  if (!data || !data.length) return;
-  const canvas = document.getElementById('priceChart');
-  const wrap = canvas.parentElement;
-  const dpr = window.devicePixelRatio || 1;
-  const W = wrap.clientWidth - 20, H = wrap.clientHeight - 20;
-  canvas.width = W * dpr; canvas.height = H * dpr;
-  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr); ctx.clearRect(0, 0, W, H);
-  const prices = data.flatMap(c => [c.h, c.l]);
-  const minP = Math.min(...prices), maxP = Math.max(...prices), range = maxP - minP || 0.001;
-  const pad = {t:14,b:14,l:4,r:54};
-  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
-  const cw = Math.max(2, (cW / data.length) * 0.6);
-  const toY = p => pad.t + cH - ((p - minP) / range) * cH;
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 0.5;
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.t + (cH / 4) * i;
-    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
-    const price = maxP - (range / 4) * i;
-    ctx.fillStyle = 'rgba(107,114,128,0.7)'; ctx.font = `9px 'IBM Plex Mono'`; ctx.textAlign = 'left';
-    ctx.fillText(price.toFixed(4), W - 52, y + 3);
-  }
-  data.forEach((c, i) => {
-    const x = pad.l + (i / data.length) * cW + cW / data.length / 2;
-    const bull = c.c >= c.o, col = bull ? '#22c55e' : '#ef4444';
-    ctx.strokeStyle = col; ctx.lineWidth = 0.8;
-    ctx.beginPath(); ctx.moveTo(x, toY(c.h)); ctx.lineTo(x, toY(c.l)); ctx.stroke();
-    const oy = toY(Math.max(c.o, c.c)), cy = toY(Math.min(c.o, c.c)), bh = Math.max(1, cy - oy);
-    if (bull) { ctx.fillStyle = col; ctx.fillRect(x - cw/2, oy, cw, bh); }
-    else { ctx.strokeStyle = col; ctx.lineWidth = 0.8; ctx.strokeRect(x - cw/2, oy, cw, bh); }
-  });
-  if (livePrice) {
-    ctx.strokeStyle = 'rgba(245,158,11,0.5)'; ctx.lineWidth = 0.7; ctx.setLineDash([4,4]);
-    const py = toY(livePrice);
-    ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(W - pad.r, py); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#f59e0b'; ctx.font = `9px 'IBM Plex Mono'`;
-    ctx.fillText(livePrice.toFixed(4), W - 52, py - 2);
-  }
-}
-
-function updateBias(h1) {
-  if (!h1 || h1.length < 15) return;
-  const r = h1.slice(-20);
-  const hh = r.map(c => c.h), ll = r.map(c => c.l);
-  const bull = Math.max(...hh.slice(-5)) > Math.max(...hh.slice(-10,-5)) && Math.min(...ll.slice(-5)) > Math.min(...ll.slice(-10,-5));
-  const bear = Math.max(...hh.slice(-5)) < Math.max(...hh.slice(-10,-5)) && Math.min(...ll.slice(-5)) < Math.min(...ll.slice(-10,-5));
-  const cls = bull ? 'bull' : bear ? 'bear' : 'neutral';
-  const txt = bull ? 'Bullish' : bear ? 'Bearish' : 'Ranging';
-  ['b-daily','b-h4','b-h1'].forEach(id => { document.getElementById(id).textContent = txt; document.getElementById(id).className = 'bias-val ' + cls; });
-  document.getElementById('b-m15').textContent = 'Ranging'; document.getElementById('b-m15').className = 'bias-val neutral';
-}
-
-function updateLevels() {
-  if (!livePrice) return;
-  const p = livePrice;
-  document.getElementById('l-r2').textContent = (p + 0.0086).toFixed(4);
-  document.getElementById('l-r1').textContent = (p + 0.0046).toFixed(4);
-  document.getElementById('l-s1').textContent = (p - 0.0044).toFixed(4);
-  document.getElementById('l-s2').textContent = (p - 0.0094).toFixed(4);
-}
-
-function setConf(n, state, label) {
-  const el = document.getElementById('c' + n);
-  el.querySelector('.cdot').className = 'cdot ' + state;
-  el.querySelector('span').textContent = label;
-  el.className = 'conf-item' + (state === 'g' ? ' on' : '');
-}
-
-let scanning = false;
-async function scanMarket() {
-  if (scanning || !livePrice) return;
-  scanning = true;
-  try {
-    // Fetch M1 first, then M15 with a delay
-    const r1 = await fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=1min&outputsize=30&apikey=${TWELVE_KEY}`);
-    const d1 = await r1.json();
-    await new Promise(res => setTimeout(res, 1500));
-    const r2 = await fetch(`https://api.twelvedata.com/time_series?symbol=GBP/USD&interval=15min&outputsize=20&apikey=${TWELVE_KEY}`);
-    const d2 = await r2.json();
-    if (!d1.values || !d2.values) { scanning = false; return; }
-    const m1 = d1.values.reverse().map(v => ({o:+v.open,h:+v.high,l:+v.low,c:+v.close}));
-    const m15 = d2.values.reverse().map(v => ({o:+v.open,h:+v.high,l:+v.low,c:+v.close}));
-    const h1 = candles['1h'];
-    if (!h1 || h1.length < 15) { scanning = false; return; }
-
-    // STEP 1: H1 bias
-    const hh = h1.slice(-20).map(c => c.h), ll = h1.slice(-20).map(c => c.l);
-    const h1Bull = Math.max(...hh.slice(-5)) > Math.max(...hh.slice(-10,-5)) && Math.min(...ll.slice(-5)) > Math.min(...ll.slice(-10,-5));
-    const h1Bear = Math.max(...hh.slice(-5)) < Math.max(...hh.slice(-10,-5)) && Math.min(...ll.slice(-5)) < Math.min(...ll.slice(-10,-5));
-    const biasOk = h1Bull || h1Bear;
-    setConf(1, biasOk ? 'g' : 'r', biasOk ? (h1Bull ? 'H1 bullish ✓' : 'H1 bearish ✓') : 'H1 ranging — wait');
-    if (!biasOk) { document.getElementById('sig-name').textContent = 'H1 ranging — no trade'; document.getElementById('sig-badge').className = 'sig-badge wait'; document.getElementById('sig-badge').textContent = 'WAIT'; scanning = false; return; }
-
-    // STEP 2: M15 POI
-    const m15H = m15.map(c => c.h), m15L = m15.map(c => c.l);
-    const nearDemand = m15L.some(l => Math.abs(l - livePrice) / livePrice < 0.0018);
-    const nearSupply = m15H.some(h => Math.abs(h - livePrice) / livePrice < 0.0018);
-    const atPOI = h1Bull ? nearDemand : nearSupply;
-    setConf(2, atPOI ? 'g' : 'a', atPOI ? 'M15 POI reached ✓' : 'Not at M15 POI yet');
-    if (!atPOI) { document.getElementById('sig-name').textContent = 'Waiting for price to reach M15 POI'; document.getElementById('sig-badge').className = 'sig-badge wait'; document.getElementById('sig-badge').textContent = 'WAIT'; setConf(3,'x','M1 trend in POI'); setConf(4,'x','CHoCH formed'); setConf(5,'x','Confirmation candle'); setConf(6,'x','RR ≥ 1:2'); scanning = false; return; }
-
-    // STEP 3: M1 counter-trend inside POI
-    const m1H = m1.slice(-10).map(c => c.h), m1L = m1.slice(-10).map(c => c.l);
-    const m1Down = m1H[m1H.length-1] < m1H[0] && m1L[m1L.length-1] < m1L[0];
-    const m1Up = m1H[m1H.length-1] > m1H[0] && m1L[m1L.length-1] > m1L[0];
-    const trendOk = h1Bull ? m1Down : m1Up;
-    setConf(3, trendOk ? 'g' : 'a', trendOk ? 'M1 counter-trend ✓' : 'Waiting for M1 trend');
-    if (!trendOk) { document.getElementById('sig-name').textContent = 'At POI — waiting for M1 trend'; setConf(4,'x','CHoCH formed'); setConf(5,'x','Confirmation candle'); setConf(6,'x','RR ≥ 1:2'); scanning = false; return; }
-
-    // STEP 4: CHoCH
-    const last5 = m1.slice(-5);
-    const choch = h1Bull ? last5[4].h > last5[2].h : last5[4].l < last5[2].l;
-    setConf(4, choch ? 'g' : 'a', choch ? 'CHoCH confirmed ✓' : 'Waiting for CHoCH');
-    if (!choch) { document.getElementById('sig-name').textContent = 'Trend forming — awaiting CHoCH'; setConf(5,'x','Confirmation candle'); setConf(6,'x','RR ≥ 1:2'); scanning = false; return; }
-
-    // STEP 5: Confirmation candle
-    const lastC = m1[m1.length-1], chochC = m1[m1.length-2];
-    const confirmed = h1Bull ? lastC.c > chochC.h : lastC.c < chochC.l;
-    setConf(5, confirmed ? 'g' : 'a', confirmed ? 'Confirmation candle ✓' : 'Awaiting confirmation close');
-    if (!confirmed) { document.getElementById('sig-name').textContent = 'CHoCH formed — awaiting confirmation'; document.getElementById('sig-badge').textContent = 'FORMING'; scanning = false; return; }
-
-    // STEP 6: RR check
-    // Limit order placed at M1 CHoCH candle body (POI of the confirmation candle)
-    const limitEntry = h1Bull ? chochC.l : chochC.h; // limit at the M1 POI candle low/high
-    const poiLow = Math.min(...m15L.slice(-5)), poiHigh = Math.max(...m15H.slice(-5));
-    const sl = h1Bull ? poiLow - 0.0002 : poiHigh + 0.0002;
-    const slPips = Math.abs(limitEntry - sl);
-    // TP at nearest liquidity (swing high/low on H1)
-    const h1SwingHigh = Math.max(...h1.slice(-10).map(c => c.h));
-    const h1SwingLow = Math.min(...h1.slice(-10).map(c => c.l));
-    const tp = h1Bull ? h1SwingHigh : h1SwingLow;
-    const rr = parseFloat((Math.abs(tp - limitEntry) / slPips).toFixed(1));
-    const rrOk = rr >= 2;
-    setConf(6, rrOk ? 'g' : 'r', rrOk ? `RR ${rr}:1 ✓` : `RR ${rr}:1 — skip`);
-    if (!rrOk) { document.getElementById('sig-name').textContent = 'Setup valid but RR insufficient'; scanning = false; return; }
-
-    // Breakeven level = the high before price dropped into POI (for longs)
-    // = the low before price rose into POI (for shorts)
-    const beLevel = h1Bull ? Math.max(...m1.slice(-15, -5).map(c => c.h)) : Math.min(...m1.slice(-15, -5).map(c => c.l));
-
-    // VALID TRADE — limit order
-    const dir = h1Bull ? 'LONG' : 'SHORT';
-    document.getElementById('sig-name').textContent = `${dir} limit order placed at ${limitEntry.toFixed(4)}`;
-    document.getElementById('sig-badge').className = `sig-badge ${h1Bull ? 'buy' : 'sell'}`;
-    document.getElementById('sig-badge').textContent = dir;
-    addTradeToLog({ dir, entry: limitEntry, sl, tp, rr, beLevel, orderType: 'LIMIT', time: new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}) });
-
-  } catch(e) { console.error('Scan error:', e); }
-  scanning = false;
-}
-
-function addTradeToLog(t) {
-  if (trades.length) {
-    const last = trades[trades.length-1];
-    if (Math.abs(last.entry - t.entry) < 0.0005) return; // dedup
-  }
-  t.status = 'OPEN'; t.pnl = null; t._ts = Date.now();
-  trades.push(t);
-  renderLog(); updateStats();
-  document.getElementById('log-tab-btn').textContent = `Trade Log (${trades.length})`;
-  // Simulate close after 2 min for demo
-  setTimeout(() => resolveTradeDemo(trades.length - 1), 120000);
-}
-
-function resolveTradeDemo(idx) {
-  if (!trades[idx] || trades[idx].status !== 'OPEN') return;
-  const t = trades[idx];
-  const rand = Math.random();
-  if (rand > 0.35) {
-    // WIN
-    t.pnl = Math.round(RISK_AMT * t.rr);
-    t.status = 'WIN';
-  } else if (rand > 0.15) {
-    // BREAKEVEN — price hit BE level then came back to entry
-    t.pnl = 0;
-    t.status = 'BE';
-    t.sl = t.entry; // SL moved to entry
+  if (status) {
+    updateBotStatus(status);
   } else {
-    // LOSS
-    t.pnl = -RISK_AMT;
-    t.status = 'LOSS';
+    document.getElementById('bot-dot').className = 'status-dot off';
+    document.getElementById('bot-status-text').textContent = 'Bot offline';
+    document.getElementById('bot-status-text').style.color = 'var(--red)';
   }
-  accountBalance += t.pnl;
-  renderLog(); updateStats();
+
+  if (tradesData) {
+    trades = tradesData;
+    renderTrades();
+    updateStats();
+  }
 }
 
-function renderLog() {
+// ─── UPDATE BOT STATUS ─────────────────────────────────────────
+function updateBotStatus(status) {
+  const active = status.bot_active;
+  document.getElementById('bot-dot').className = 'status-dot ' + (active ? 'on' : 'off');
+  document.getElementById('bot-status-text').textContent = active ? 'Bot running' : 'Bot offline';
+  document.getElementById('bot-status-text').style.color = active ? 'var(--green)' : 'var(--red)';
+  document.getElementById('last-scan').textContent = 'Last scan: ' + (status.last_scan || '—');
+
+  if (status.account) {
+    const acc = status.account;
+    document.getElementById('balance-display').textContent = '$' + acc.balance?.toLocaleString();
+    document.getElementById('balance-display').style.color = acc.balance >= 200000 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('equity-display').textContent = '$' + acc.equity?.toLocaleString();
+    const profit = acc.profit || 0;
+    document.getElementById('profit-display').textContent = (profit >= 0 ? '+' : '') + '$' + profit?.toLocaleString();
+    document.getElementById('profit-display').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  if (status.open_positions) renderPositions(status.open_positions);
+
+  // Stats from bot
+  if (status.win_rate !== undefined) {
+    document.getElementById('s-winrate').textContent = status.win_rate + '%';
+    document.getElementById('s-pnl').textContent = (status.total_pnl >= 0 ? '+' : '') + '$' + status.total_pnl?.toLocaleString();
+    document.getElementById('s-pnl').className = 'stat-val ' + (status.total_pnl >= 0 ? 'green' : 'red');
+    document.getElementById('s-rr').textContent = status.avg_rr + 'R';
+    document.getElementById('s-trades').textContent = status.trades_total || 0;
+  }
+
+  // Add to scan log
+  if (status.last_scan) {
+    addScanLog(status.last_scan, active ? 'Bot active — scanning' : 'Bot offline', active ? 'ok' : 'warn');
+  }
+}
+
+// ─── RENDER POSITIONS ──────────────────────────────────────────
+function renderPositions(positions) {
+  const el = document.getElementById('positions-list');
+  if (!positions.length) { el.innerHTML = '<div class="no-positions">No open positions</div>'; return; }
+  el.innerHTML = positions.map(p => `
+    <div class="pos-card">
+      <div class="pos-header">
+        <div class="pos-dir ${p.dir === 'LONG' ? 'green' : 'red'}">${p.dir}</div>
+        <div class="pos-pnl ${p.profit >= 0 ? 'green' : 'red'}">${p.profit >= 0 ? '+' : ''}$${p.profit}</div>
+      </div>
+      <div class="pos-detail">Entry: ${p.entry} · SL: ${p.sl} · TP: ${p.tp}</div>
+      <div class="pos-detail">Lots: ${p.lots} · Ticket: ${p.ticket}</div>
+    </div>`).join('');
+}
+
+// ─── RENDER TRADES ─────────────────────────────────────────────
+function renderTrades() {
   const empty = document.getElementById('log-empty');
-  const wrap = document.getElementById('log-table-wrap');
+  const wrap  = document.getElementById('log-table-wrap');
   const tbody = document.getElementById('log-body');
   if (!trades.length) { empty.style.display = 'block'; wrap.style.display = 'none'; return; }
   empty.style.display = 'none'; wrap.style.display = 'block';
   tbody.innerHTML = trades.slice().reverse().map(t => {
-    const beHit = t.beLevel ? `${t.beLevel.toFixed(4)}` : '—';
-    const statusLabel = t.status === 'BE' ? 'BREAKEVEN' : t.status;
-    const statusClass = t.status === 'WIN' ? 'win' : t.status === 'LOSS' ? 'loss' : t.status === 'BE' ? 'open' : 'open';
-    const pnlLabel = t.pnl === null ? '—' : t.pnl === 0 ? '$0 (BE)' : (t.pnl > 0 ? '+' : '') + ' $' + Math.abs(t.pnl).toLocaleString();
+    const statusClass = t.status === 'WIN' ? 'win' : t.status === 'LOSS' ? 'loss' : 'open-t';
+    const pnlText = t.pnl !== null && t.pnl !== undefined ? (t.pnl >= 0 ? '+' : '') + '$' + Math.abs(t.pnl).toLocaleString() : '—';
     return `<tr>
       <td>${t.time}</td>
       <td class="${t.dir==='LONG'?'dlong':'dshort'}">${t.dir}</td>
-      <td style="color:var(--accent)">${t.entry.toFixed(4)} <span style="font-size:9px;color:var(--muted)">LMT</span></td>
-      <td>${t.sl.toFixed(4)}</td>
-      <td style="color:var(--amber)">${beHit}</td>
-      <td>${t.tp.toFixed(4)}</td>
+      <td style="color:var(--accent)">${t.entry} <span style="font-size:9px;color:var(--muted)">LMT</span></td>
+      <td>${t.sl}</td>
+      <td style="color:var(--amber)">${t.be || '—'}</td>
+      <td>${t.tp}</td>
       <td style="color:var(--amber)">${t.rr}R</td>
-      <td>$${RISK_AMT.toLocaleString()}</td>
-      <td class="${t.pnl===null?'open':t.pnl>=0?'win':'loss'}">${pnlLabel}</td>
-      <td class="${statusClass}">${statusLabel}</td>
+      <td>${t.lots}</td>
+      <td>$${t.risk_amt?.toLocaleString() || '—'}</td>
+      <td class="${t.pnl >= 0 ? 'win' : t.pnl < 0 ? 'loss' : 'open-t'}">${pnlText}</td>
+      <td class="${statusClass}">${t.status}</td>
     </tr>`;
   }).join('');
 }
 
+// ─── UPDATE STATS ──────────────────────────────────────────────
 function updateStats() {
   const closed = trades.filter(t => t.status !== 'OPEN');
-  const wins = closed.filter(t => t.status === 'WIN');
-  const pnl = closed.reduce((s,t) => s + (t.pnl||0), 0);
-  const avgRR = trades.length ? (trades.reduce((s,t) => s+t.rr,0)/trades.length).toFixed(1)+'R' : '—';
-  const wr = closed.length ? Math.round(wins.length/closed.length*100)+'%' : '—';
-  document.getElementById('s-balance').textContent = '$'+Math.round(accountBalance).toLocaleString();
-  document.getElementById('s-balance').style.color = accountBalance >= CAPITAL ? 'var(--green)' : 'var(--red)';
+  const wins   = closed.filter(t => t.status === 'WIN');
+  const pnl    = closed.reduce((s,t) => s + (t.pnl || 0), 0);
+  const wr     = closed.length ? Math.round(wins.length / closed.length * 100) + '%' : '—';
+  const avgRR  = trades.length ? (trades.reduce((s,t) => s + t.rr, 0) / trades.length).toFixed(1) + 'R' : '—';
   document.getElementById('s-winrate').textContent = wr;
-  document.getElementById('s-pnl').textContent = (pnl>=0?'+':'')+' $'+Math.abs(Math.round(pnl)).toLocaleString();
-  document.getElementById('s-pnl').className = 'stat-val '+(pnl>=0?'win':'loss');
+  document.getElementById('s-pnl').textContent = (pnl >= 0 ? '+' : '') + '$' + Math.round(pnl).toLocaleString();
+  document.getElementById('s-pnl').className = 'stat-val ' + (pnl >= 0 ? 'green' : 'red');
   document.getElementById('s-rr').textContent = avgRR;
-  document.getElementById('trades-today').textContent = trades.length;
-  document.getElementById('today-pnl').textContent = (pnl>=0?'+':'')+' $'+Math.abs(Math.round(pnl)).toLocaleString();
-  document.getElementById('today-pnl').style.color = pnl>=0?'var(--green)':'var(--red)';
-  document.getElementById('account-display').textContent = '$'+Math.round(accountBalance).toLocaleString();
+  document.getElementById('s-trades').textContent = trades.length;
 }
 
-function manualLog() { switchTab('ai',document.querySelectorAll('.tabbtn')[1]); quickAsk('Help me log a manual trade. Ask me one at a time: direction, entry, SL, TP, and SMC confluences.'); }
-function clearLog() { if(confirm('Clear all trades?')){ trades=[]; accountBalance=CAPITAL; renderLog(); updateStats(); document.getElementById('log-tab-btn').textContent='Trade Log'; } }
-function exportLog() {
-  if(!trades.length){alert('No trades to export.');return;}
-  const rows=[['Time','Dir','Entry','SL','TP','RR','Risk $','P&L','Status']];
-  trades.forEach(t=>rows.push([t.time,t.dir,t.entry.toFixed(4),t.sl.toFixed(4),t.tp.toFixed(4),t.rr+'R',RISK_AMT,t.pnl!==null?t.pnl:'',t.status]));
-  const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));a.download='smc_trades_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+// ─── SETTINGS ──────────────────────────────────────────────────
+function loadSettings() {
+  const saved = localStorage.getItem('smc_settings');
+  if (saved) {
+    const s = JSON.parse(saved);
+    document.getElementById('set-risk').value     = s.risk_pct || 0.5;
+    document.getElementById('set-rr').value       = s.min_rr || 2;
+    document.getElementById('set-interval').value = s.scan_interval || 60;
+    document.getElementById('set-active').checked = s.trading_active !== false;
+  }
 }
 
-const SYSTEM_PROMPT = `You are an AI trading analyst trained on a specific Smart Money Concepts (SMC) strategy for GBP/USD. Never deviate from these rules.
+function saveSettings() {
+  const settings = {
+    risk_pct:       parseFloat(document.getElementById('set-risk').value),
+    min_rr:         parseFloat(document.getElementById('set-rr').value),
+    scan_interval:  parseInt(document.getElementById('set-interval').value),
+    trading_active: document.getElementById('set-active').checked
+  };
+  localStorage.setItem('smc_settings', JSON.stringify(settings));
 
-STRATEGY:
-1. H1 BIAS: Bullish H1 (HH+HL) = LONG only. Bearish H1 (LH+LL) = SHORT only. Ranging = NO TRADE.
-2. M15 POI: In bullish H1 look for M15 demand/flip zones. In bearish H1 look for M15 supply/flip zones. Wait for price to reach — never chase. Zone can be refined M15→M5.
-3. M1 ENTRY (inside POI only):
-   LONG: Price at M15 demand → M1 downtrend inside POI → CHoCH on M1 (break above previous M1 high) → next candle closes ABOVE CHoCH candle high → place BUY LIMIT at the low/body of the CHoCH M1 candle (the POI of that candle) → SL below POI low → TP at nearest liquidity or H1 BOS high.
-   SHORT: Reverse — SELL LIMIT at high/body of CHoCH candle → SL above POI high → TP at nearest liquidity or H1 BOS low.
-4. BREAKEVEN RULE: Once filled, identify the highest point price reached BEFORE dropping into the POI (for longs) or lowest point before rising into POI (for shorts). If price rallies to that level and then pulls back to entry — move SL to entry (breakeven). Trade then either hits TP or exits at 0.
-5. INVALIDATION: H1 ranging, no M1 trend in POI, confirmation candle fails, RR < 1:2.
-6. ACCOUNT: $100k capital, $500 risk per trade (0.5%), minimum RR 1:2, target 1:3 to 1:8.
+  // Download settings.json for user to replace on their PC
+  const blob = new Blob([JSON.stringify(settings, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'settings.json';
+  a.click();
 
-Be direct and precise. For valid setups: state limit entry price, SL, BE level, TP, and RR. For invalid: say exactly why.`;
+  addScanLog(new Date().toLocaleTimeString(), 'Settings saved — replace settings.json on your PC', 'ok');
+}
+
+// ─── SCAN LOG ──────────────────────────────────────────────────
+function addScanLog(time, message, type) {
+  const el = document.getElementById('scan-log');
+  const div = document.createElement('div');
+  div.className = 'scan-entry ' + (type || '');
+  div.innerHTML = `<span class="time">${time}</span>${message}`;
+  el.insertBefore(div, el.firstChild);
+  if (el.children.length > 50) el.removeChild(el.lastChild);
+}
+
+// ─── EXPORT CSV ────────────────────────────────────────────────
+function exportCSV() {
+  if (!trades.length) { alert('No trades to export.'); return; }
+  const rows = [['Time','Dir','Entry','SL','BE','TP','RR','Lots','Risk $','P&L','Status']];
+  trades.forEach(t => rows.push([t.time, t.dir, t.entry, t.sl, t.be||'', t.tp, t.rr+'R', t.lots, t.risk_amt, t.pnl||'', t.status]));
+  const a = document.createElement('a');
+  a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r => r.join(',')).join('\n'));
+  a.download = 'smc_trades_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ─── AI COACH ──────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are an AI trading coach for Hussein's GBP/USD SMC strategy. You have access to his trade history and bot status.
+
+STRATEGY RULES:
+1. H1 BIAS: Bullish (HH+HL) = LONG only. Bearish (LH+LL) = SHORT only. Ranging = NO TRADE.
+2. M15 POI: Demand zones (bullish) or Supply zones (bearish). Wait for price to reach — never chase.
+3. M1 ENTRY: Counter-trend on M1 inside POI → CHoCH → confirmation candle closes beyond CHoCH → BUY/SELL LIMIT at CHoCH candle POI → SL below/above POI → TP at liquidity/H1 BOS.
+4. BREAKEVEN: When price reaches 50% of TP distance, SL moves to entry.
+5. ACCOUNT: $200k demo, 0.5% risk per trade, min RR 1:2.
+
+Be direct, precise, and use proper SMC terminology. Help Hussein refine his edge based on trade outcomes.
+
+MEMORY (what you've learned from Hussein):
+${brainNotes || 'No notes yet — Hussein will teach you over time.'}`;
 
 async function sendAI() {
   const input = document.getElementById('ai-input');
@@ -632,10 +482,10 @@ async function sendAI() {
   if (!text) return;
   input.value = '';
   addMsg(text, 'user');
-  sessionNotes.push(text);
   const thinking = addMsg('Thinking...', 'think');
 
-  const brainContext = strategyBrain ? `\n\n## WHAT YOU HAVE LEARNED SO FAR (from previous sessions):\n${strategyBrain}` : '';
+  // Build context with live data
+  const context = trades.length ? `\n\nCurrent trade history: ${JSON.stringify(trades.slice(-10))}` : '';
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -644,47 +494,25 @@ async function sendAI() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: SYSTEM_PROMPT + brainContext,
+        system: SYSTEM_PROMPT + context,
         messages: [...aiMessages, { role: 'user', content: text }]
       })
     });
     const data = await resp.json();
-    if (!resp.ok) { thinking.remove(); addMsg('API error ' + resp.status + ': ' + (data.error?.message || JSON.stringify(data)), 'bot'); return; }
+    if (!resp.ok) { thinking.remove(); addMsg('API error: ' + (data.error?.message || 'Unknown'), 'bot'); return; }
     const reply = data.content?.find(b => b.type === 'text')?.text || 'No response.';
-    thinking.remove();
-    addMsg(reply, 'bot');
+    thinking.remove(); addMsg(reply, 'bot');
     aiMessages.push({ role: 'user', content: text });
     aiMessages.push({ role: 'assistant', content: reply });
     if (aiMessages.length > 20) aiMessages = aiMessages.slice(-20);
 
-    // Auto-save to Notion if user seems to be teaching something new
-    const teachingKeywords = ['remember', 'note', 'important', 'rule', 'condition', 'when', 'if', 'always', 'never', 'i noticed', 'i found', 'add this', 'update'];
-    const isTeaching = teachingKeywords.some(k => text.toLowerCase().includes(k));
-    if (isTeaching) {
-      await updateAndSaveBrain(text, reply);
+    // Auto-save learning notes
+    const keywords = ['remember', 'note', 'rule', 'always', 'never', 'i noticed', 'important', 'condition', 'when', 'if'];
+    if (keywords.some(k => text.toLowerCase().includes(k))) {
+      brainNotes += `\n- ${text}`;
+      localStorage.setItem('smc_brain', brainNotes);
     }
   } catch(e) { thinking.remove(); addMsg('Network error: ' + e.message, 'bot'); }
-}
-
-async function updateAndSaveBrain(userNote, aiReply) {
-  try {
-    const updateResp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        system: 'You are updating a trading strategy knowledge base. Given the existing brain content and a new note from the trader, merge the new knowledge into the existing content. Keep it organized, clear, and concise. Format as bullet points grouped by topic. Do not remove existing knowledge — only add or refine. Return only the updated brain content, nothing else.',
-        messages: [{ role: 'user', content: `EXISTING BRAIN:\n${strategyBrain || '(empty)'}\n\nNEW NOTE FROM TRADER:\n${userNote}\n\nAI UNDERSTANDING:\n${aiReply}\n\nReturn the updated brain:` }]
-      })
-    });
-    const updateData = await updateResp.json();
-    const updatedBrain = updateData.content?.find(b => b.type === 'text')?.text;
-    if (updatedBrain) {
-      strategyBrain = updatedBrain;
-      await saveBrainToNotion(updatedBrain);
-    }
-  } catch(e) {}
 }
 
 function addMsg(text, type) {
@@ -695,14 +523,13 @@ function addMsg(text, type) {
   return div;
 }
 
-function quickAsk(q) { switchTab('ai',document.querySelectorAll('.tabbtn')[1]); document.getElementById('ai-input').value=q; sendAI(); }
+function quickAsk(q) { switchTab('ai', document.querySelectorAll('.tabbtn')[1]); document.getElementById('ai-input').value = q; sendAI(); }
 
 function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(tab==='chart') setTimeout(()=>drawChart(candles[currentTf]||[]),50);
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 </script>
 
