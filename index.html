@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_3.html -->
+<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_4.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -385,8 +385,8 @@
     <div class="live-label">LIVE</div>
   </div>
   <div class="price-display">
-    <div class="price-big" id="live-price" style="color: var(--green);">1.2637</div>
-    <div class="price-pip" id="price-pip" style="color: var(--green);">+15 pips today</div>
+    <div class="price-big" id="live-price" style="color: var(--green);">1.2636</div>
+    <div class="price-pip" id="price-pip" style="color: var(--green);">+14 pips today</div>
   </div>
 </div>
 
@@ -426,7 +426,7 @@
         </div>
         <div class="rsi-track">
           <div class="rsi-fill" style="width:100%"></div>
-          <div class="rsi-needle" id="rsi-needle" style="left: 59.7592%;"></div>
+          <div class="rsi-needle" id="rsi-needle" style="left: 59.7525%;"></div>
         </div>
         <div class="rsi-labels">
           <span>30</span><span>50</span><span>70</span>
@@ -447,7 +447,7 @@
         </div>
         <div class="level-row cur">
           <div><div class="level-type">PRICE</div><div style="font-size:10px;color:var(--accent)">Now</div></div>
-          <div class="level-price" id="cur-price-side">1.2637</div>
+          <div class="level-price" id="cur-price-side">1.2636</div>
         </div>
         <div class="level-row sup">
           <div><div class="level-type">SUP 1</div><div style="font-size:10px;color:var(--muted)">FVG Zone</div></div>
@@ -594,7 +594,7 @@
 
 </div><!-- end app -->
 <script>
-  let API_KEY = sessionStorage.getItem('smc_key') || '';
+  let API_KEY = '';
 
   function unlockApp() {
     const val = document.getElementById('key-input').value.trim();
@@ -603,24 +603,15 @@
       return;
     }
     API_KEY = val;
-    sessionStorage.setItem('smc_key', val);
     document.getElementById('lockscreen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     setTimeout(() => setTf('H1', document.querySelectorAll('.tf-btn')[2]), 100);
   }
 
-  function initApp() {
-    if (!API_KEY) {
-      document.getElementById('lockscreen').style.display = 'flex';
-      document.getElementById('app').style.display = 'none';
-    } else {
-      document.getElementById('lockscreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      setTimeout(() => setTf('H1', document.querySelectorAll('.tf-btn')[2]), 100);
-    }
-  }
-
-  window.onload = initApp;
+  window.onload = function() {
+    document.getElementById('lockscreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  };
   const SYSTEM_PROMPT = `You are an AI trading analyst trained on a specific Smart Money Concepts (SMC) strategy for GBP/USD. Your job is to analyze setups, backtest this strategy on historical price action described by the user, and give precise, honest assessments. Never deviate from these rules.
 
 ---
