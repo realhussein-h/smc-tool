@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/pc/Downloads/smc_gbpusd_tool.html -->
+<!-- saved from url=(0052)file:///C:/Users/pc/Downloads/smc_gbpusd_tool_3.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -365,6 +365,18 @@
 <style type="text/css" id="operaUserStyle"></style></head>
 <body>
 
+<!-- Lock screen -->
+<div id="lockscreen" style="display:none;position:fixed;inset:0;background:#0d0f14;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="font-size:22px;font-weight:700;font-family:&#39;Syne&#39;,sans-serif;color:#e8eaf0;">SMC Trading Tool</div>
+  <div style="font-size:13px;color:#6b7280;font-family:&#39;Syne&#39;,sans-serif;">Enter your API key to continue</div>
+  <input id="key-input" type="password" placeholder="sk-ant-..." style="width:320px;max-width:90vw;padding:12px 16px;background:#1a1e28;border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e8eaf0;font-size:13px;font-family:&#39;IBM Plex Mono&#39;,monospace;outline:none;" onkeydown="if(event.key===&#39;Enter&#39;)unlockApp()">
+  <button onclick="unlockApp()" style="padding:11px 32px;background:#3b82f6;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:&#39;Syne&#39;,sans-serif;">Unlock</button>
+  <div id="key-error" style="font-size:12px;color:#ef4444;display:none;">Invalid key — must start with sk-ant-</div>
+</div>
+
+<!-- App -->
+<div id="app" style="display:none;flex-direction:column;flex:1;">
+
 <!-- Top bar -->
 <div class="topbar">
   <div class="topbar-left">
@@ -373,8 +385,8 @@
     <div class="live-label">LIVE</div>
   </div>
   <div class="price-display">
-    <div class="price-big" id="live-price" style="color: var(--green);">1.2642</div>
-    <div class="price-pip" id="price-pip" style="color: var(--green);">+20 pips today</div>
+    <div class="price-big" id="live-price" style="color: var(--green);">1.2637</div>
+    <div class="price-pip" id="price-pip" style="color: var(--green);">+15 pips today</div>
   </div>
 </div>
 
@@ -410,11 +422,11 @@
       <div class="rsi-meter">
         <div class="rsi-header">
           <span style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">Current</span>
-          <span class="rsi-num" id="rsi-num" style="color: var(--amber);">49.9</span>
+          <span class="rsi-num" id="rsi-num" style="color: var(--amber);">53.9</span>
         </div>
         <div class="rsi-track">
           <div class="rsi-fill" style="width:100%"></div>
-          <div class="rsi-needle" id="rsi-needle" style="left: 49.8096%;"></div>
+          <div class="rsi-needle" id="rsi-needle" style="left: 59.7592%;"></div>
         </div>
         <div class="rsi-labels">
           <span>30</span><span>50</span><span>70</span>
@@ -435,7 +447,7 @@
         </div>
         <div class="level-row cur">
           <div><div class="level-type">PRICE</div><div style="font-size:10px;color:var(--accent)">Now</div></div>
-          <div class="level-price" id="cur-price-side">1.2642</div>
+          <div class="level-price" id="cur-price-side">1.2637</div>
         </div>
         <div class="level-row sup">
           <div><div class="level-type">SUP 1</div><div style="font-size:10px;color:var(--muted)">FVG Zone</div></div>
@@ -465,10 +477,10 @@
         <div class="tf-btns">
           <button class="tf-btn" onclick="setTf(&#39;M1&#39;,this)">M1</button>
           <button class="tf-btn" onclick="setTf(&#39;M15&#39;,this)">M15</button>
-          <button class="tf-btn" onclick="setTf(&#39;H1&#39;,this)">H1</button>
+          <button class="tf-btn active" onclick="setTf(&#39;H1&#39;,this)">H1</button>
         </div>
         <div class="chart-wrap">
-          <canvas id="priceChart" width="597" height="254" style="width: 597px; height: 254px;"></canvas>
+          <canvas id="priceChart"></canvas>
         </div>
         <div class="confluence-box">
           <div class="signal-header">
@@ -580,27 +592,98 @@
   </div>
 </div>
 
+</div><!-- end app -->
 <script>
-  const API_KEY = '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';
-  const SYSTEM_PROMPT = `You are an advanced Forex trading coach specializing in Smart Money Concepts (SMC) for GBP/USD. The user is an experienced trader who uses multi-timeframe analysis — H1 and M15 for structure and confirmation, M1 for entry, with respect to higher timeframes (H4, Daily).
+  let API_KEY = sessionStorage.getItem('smc_key') || '';
 
-Their strategy is based on Smart Money Concepts:
-- BOS (Break of Structure) and CHoCH (Change of Character) for directional bias
-- Order Blocks (OB) as supply/demand zones
-- Fair Value Gaps (FVG) as imbalance zones to be filled
-- Liquidity sweeps above/below key highs and lows
-- Top-down analysis: Daily/H4 → H1 → M15 → M1 entry
-- RSI as a confluence tool, not the primary trigger
-- Support & Resistance as structural references
+  function unlockApp() {
+    const val = document.getElementById('key-input').value.trim();
+    if (!val.startsWith('sk-ant-')) {
+      document.getElementById('key-error').style.display = 'block';
+      return;
+    }
+    API_KEY = val;
+    sessionStorage.setItem('smc_key', val);
+    document.getElementById('lockscreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    setTimeout(() => setTf('H1', document.querySelectorAll('.tf-btn')[2]), 100);
+  }
 
-Current context:
-- GBP/USD price: ~1.2634
-- Daily/H4/H1 bias: Bullish
-- M15: Ranging
-- Key resistance: 1.2680 (Order Block), 1.2720 (liquidity)
-- Key support: 1.2590 (FVG), 1.2540 (EQL lows)
+  function initApp() {
+    if (!API_KEY) {
+      document.getElementById('lockscreen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    } else {
+      document.getElementById('lockscreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      setTimeout(() => setTf('H1', document.querySelectorAll('.tf-btn')[2]), 100);
+    }
+  }
 
-Be concise, direct, technical, and use proper SMC terminology throughout. Always reference the higher timeframe bias before discussing lower timeframe setups. If a setup is invalid or lacks confluence, say so directly. Help the user refine their edge and identify high-probability setups only.`;
+  window.onload = initApp;
+  const SYSTEM_PROMPT = `You are an AI trading analyst trained on a specific Smart Money Concepts (SMC) strategy for GBP/USD. Your job is to analyze setups, backtest this strategy on historical price action described by the user, and give precise, honest assessments. Never deviate from these rules.
+
+---
+
+## THE STRATEGY — EXACT RULES
+
+### STEP 1: H1 BIAS (Top-down, non-negotiable)
+- If H1 is in a bullish trend (higher highs, higher lows, BOS to the upside) → LONG bias only. No shorts.
+- If H1 is in a bearish trend (lower highs, lower lows, BOS to the downside) → SHORT bias only. No longs.
+- If H1 is ranging or unclear → NO TRADE. Wait for structure.
+
+### STEP 2: M15 POI IDENTIFICATION
+- In a bullish H1: Look for M15 Demand Zones or Flip Zones (former resistance turned support) as the Point of Interest (POI).
+- In a bearish H1: Look for M15 Supply Zones or Flip Zones (former support turned resistance) as the POI.
+- Do NOT enter at the POI immediately. Wait for price to reach it and show reaction.
+- Zone refinement: A M15 zone can be refined into a M5 zone for a tighter, more precise POI.
+
+### STEP 3: M1 ENTRY CONFIRMATION (inside the POI only)
+This is the most critical step. ALL of the following must happen inside the POI:
+
+FOR LONGS (bullish H1 + price at M15 demand/flip zone):
+1. Price enters the M15 POI
+2. On M1, a downtrend must be present inside the POI (lower highs, lower lows)
+3. A CHoCH (Change of Character) forms on M1 — price breaks above a previous M1 high, signaling the downtrend is ending
+4. Wait for the NEXT M1 candle AFTER the CHoCH candle to CLOSE ABOVE the high of the CHoCH candle — this is the confirmation candle
+5. Enter LONG on the close of that confirmation candle
+6. SL: Below the lowest low of the POI (protecting the wick/low)
+7. TP: The nearest liquidity above (equal highs, previous swing high) OR the high that would create a new BOS on H1
+
+FOR SHORTS (bearish H1 + price at M15 supply/flip zone):
+1. Price enters the M15 POI
+2. On M1, an uptrend must be present inside the POI (higher highs, higher lows)
+3. A CHoCH forms on M1 — price breaks below a previous M1 low, signaling the uptrend is ending
+4. Wait for the NEXT M1 candle AFTER the CHoCH candle to CLOSE BELOW the low of the CHoCH candle — this is the confirmation candle
+5. Enter SHORT on the close of that confirmation candle
+6. SL: Above the highest high of the POI
+7. TP: The nearest liquidity below (equal lows, previous swing low) OR the low that would create a new BOS on H1
+
+### INVALIDATION — DO NOT TRADE IF:
+- H1 structure is unclear or ranging
+- Price blows through the POI without a M1 CHoCH forming
+- The confirmation candle does not close beyond the CHoCH candle
+- There is no clear M1 trend (up or down) inside the POI before the CHoCH
+- The SL would be disproportionately large relative to the TP (minimum 1:2 RR required)
+- Price has already moved significantly away from the POI
+
+### RISK/REWARD:
+- Minimum acceptable RR: 1:2
+- Target RR: 1:3 to 1:8 depending on distance to liquidity
+- Always target liquidity (equal highs/lows, previous swing points) or the next BOS level on H1
+
+---
+
+## YOUR TASKS
+When the user describes a historical or current setup, you must:
+1. Identify if H1 bias is clear (bullish/bearish/ranging)
+2. Confirm if a valid M15 POI exists
+3. Check if M1 CHoCH + confirmation candle conditions are met
+4. State clearly: VALID SETUP or INVALID SETUP and why
+5. If valid: state the entry, SL, and TP levels
+6. If backtesting: track win/loss, RR achieved, and what confluence was present or missing
+
+Be direct, precise, and ruthlessly honest. If a setup does not meet ALL criteria, say it is invalid. Do not force trades. Quality over quantity.`;
 
   let messages = [];
   let basePrice = 1.2634;
@@ -801,11 +884,7 @@ Be concise, direct, technical, and use proper SMC terminology throughout. Always
     goAI('Help me log a new trade. Ask me one question at a time: direction, entry price, stop loss, take profit, and my SMC confluences for this setup.');
   }
 
-  // Init
-  setTimeout(() => setTf('H1', document.querySelectorAll('.tf-btn')[2]), 100);
-  setInterval(() => {
-    if (currentTf) setTf(currentTf, null);
-  }, 15000);
+  // Init handled by window.onload above
 </script>
 
 
