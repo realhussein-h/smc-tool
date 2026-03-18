@@ -1,9 +1,9 @@
 {
-  "last_scan": "2026-03-18 13:02:47",
+  "last_scan": "2026-03-18 13:03:06",
   "account": {
     "balance": 202071.18,
-    "equity": 202347.82,
-    "profit": 276.64,
+    "equity": 202198.86,
+    "profit": 127.68,
     "currency": "USD"
   },
   "trades_total": 3,
@@ -18,7 +18,7 @@
       "entry": 1.33565,
       "sl": 1.33518,
       "tp": 1.33706,
-      "profit": 276.64,
+      "profit": 127.68,
       "lots": 21.28
     }
   ],
