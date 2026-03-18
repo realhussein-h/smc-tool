@@ -1,0 +1,21 @@
+[
+  {
+    "time": "2026-03-18 06:52:51",
+    "dir": "LONG",
+    "entry": 1.33566,
+    "sl": 1.33538,
+    "sl_pips": 2.8,
+    "tp2r": 1.33622,
+    "tp3r": 1.3365,
+    "tp5r": 1.33706,
+    "lots": 35.71,
+    "risk_amt": 1000.0,
+    "fast_ema": 1.33541,
+    "slow_ema": 1.33539,
+    "order_id": 1538301855,
+    "status": "OPEN",
+    "pnl": null,
+    "rr_achieved": null,
+    "close_time": null
+  }
+]
