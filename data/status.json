@@ -1,24 +1,4 @@
 {
-  "last_scan": "2026-03-18 06:52:36",
-  "account": {
-    "balance": 200000.0,
-    "equity": 200000.0,
-    "profit": 0.0,
-    "free_margin": 200000.0,
-    "currency": "USD"
-  },
-  "settings": {
-    "risk_pct": 0.5,
-    "min_rr": 2.0,
-    "scan_interval": 15,
-    "trading_active": true,
-    "symbol": "GBPUSD"
-  },
-  "trades_total": 0,
-  "trades_open": 0,
-  "win_rate": 0,
-  "total_pnl": 0,
-  "avg_rr": 0,
-  "open_positions": [],
-  "bot_active": true
+  "bot_active": false,
+  "last_scan": "2026-03-18 06:52:37"
 }
