@@ -36,5 +36,24 @@
     "pnl": null,
     "rr_achieved": null,
     "close_time": null
+  },
+  {
+    "time": "2026-03-18 12:41:44",
+    "dir": "LONG",
+    "entry": 1.33565,
+    "sl": 1.33518,
+    "sl_pips": 4.7,
+    "tp2r": 1.33659,
+    "tp3r": 1.33706,
+    "tp5r": 1.338,
+    "lots": 21.28,
+    "risk_amt": 1000.0,
+    "fast_ema": 1.33524,
+    "slow_ema": 1.33524,
+    "order_id": 1538797528,
+    "status": "OPEN",
+    "pnl": null,
+    "rr_achieved": null,
+    "close_time": null
   }
 ]
