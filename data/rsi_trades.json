@@ -34,5 +34,17 @@
     "pnl": 77.0,
     "close_price": 4397.39,
     "close_time": "2026-03-27 02:13:08"
+  },
+  {
+    "time": "2026-03-27 02:25:01",
+    "dir": "SHORT",
+    "entry": 4402.14,
+    "rsi": 67.02,
+    "lots": 1.0,
+    "ticket": 1559692950,
+    "status": "OPEN",
+    "pnl": null,
+    "close_price": null,
+    "close_time": null
   }
 ]
