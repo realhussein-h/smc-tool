@@ -1,18 +1,26 @@
 {
-  "last_scan": "2026-03-27 02:11:57",
+  "last_scan": "2026-03-27 02:12:06",
   "account": {
-    "balance": 100307.0,
-    "equity": 100307.0,
-    "profit": 0.0,
+    "balance": 100303.5,
+    "equity": 100281.5,
+    "profit": -22.0,
     "currency": "USD"
   },
-  "trades_total": 2,
-  "trades_open": 0,
+  "trades_total": 3,
+  "trades_open": 1,
   "win_rate": 100,
   "total_pnl": 334.0,
-  "open_positions": [],
-  "active_trade": false,
-  "cooldown_until": "01:34:02",
+  "open_positions": [
+    {
+      "ticket": 1559676524,
+      "dir": "SHORT",
+      "entry": 4396.62,
+      "profit": -22.0,
+      "lots": 1.0
+    }
+  ],
+  "active_trade": true,
+  "cooldown_until": "02:22:05",
   "rsi_sell_level": 67.0,
   "rsi_buy_level": 21.3,
   "bot_active": true,
