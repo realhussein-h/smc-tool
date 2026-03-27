@@ -18,9 +18,9 @@
     "rsi": 20.55,
     "lots": 1.0,
     "ticket": 1559600277,
-    "status": "OPEN",
-    "pnl": null,
-    "close_price": null,
-    "close_time": null
+    "status": "WIN",
+    "pnl": 284.0,
+    "close_price": 4389.86,
+    "close_time": "2026-03-27 01:25:15"
   }
 ]
