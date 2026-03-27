@@ -1,20 +1,5 @@
 {
-  "last_scan": "2026-03-27 15:30:26",
-  "account": {
-    "balance": 97381.0,
-    "equity": 97381.0,
-    "profit": 0.0,
-    "currency": "USD"
-  },
-  "trades_total": 21,
-  "trades_open": 0,
-  "win_rate": 57,
-  "total_pnl": 2397.0,
-  "open_positions": [],
-  "active_trade": false,
-  "cooldown_until": "15:27:08",
-  "rsi_sell_level": 67.0,
-  "rsi_buy_level": 21.3,
-  "bot_active": true,
-  "bot_type": "RSI_SCALPER"
+  "bot_active": false,
+  "bot_type": "RSI_SCALPER",
+  "last_scan": "2026-03-27 15:30:31"
 }
