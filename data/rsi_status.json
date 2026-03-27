@@ -1,9 +1,9 @@
 {
-  "last_scan": "2026-03-27 15:17:44",
+  "last_scan": "2026-03-27 15:17:52",
   "account": {
     "balance": 97554.5,
-    "equity": 97602.5,
-    "profit": 48.0,
+    "equity": 97654.5,
+    "profit": 100.0,
     "currency": "USD"
   },
   "trades_total": 21,
@@ -15,7 +15,7 @@
       "ticket": 1560978311,
       "dir": "SHORT",
       "entry": 4467.86,
-      "profit": 48.0,
+      "profit": 100.0,
       "lots": 1.0
     }
   ],
