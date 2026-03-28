@@ -1,0 +1,24 @@
+{
+  "last_scan": "2026-03-28 13:57:00",
+  "account": {
+    "balance": 50000.0,
+    "equity": 50000.0,
+    "profit": 0.0,
+    "currency": "USD"
+  },
+  "trades_total": 0,
+  "trades_open": 0,
+  "win_rate": 0,
+  "total_pnl": 0,
+  "open_positions": [],
+  "active_trade": false,
+  "pending_signal": null,
+  "rsi_has_reset": true,
+  "cooldown_until": null,
+  "filters": {
+    "rsi_jump_skip": "5-15",
+    "session_skip": "Asian UTC 0-8"
+  },
+  "bot_active": true,
+  "bot_type": "RSI_SCALPER_V3"
+}
