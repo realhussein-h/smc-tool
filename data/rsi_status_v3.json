@@ -1,34 +1,26 @@
 {
-  "last_scan": "2026-03-30 01:40:01",
+  "last_scan": "2026-03-30 01:41:01",
   "account": {
-    "balance": 49996.5,
-    "equity": 50012.5,
-    "profit": 16.0,
+    "balance": 50033.0,
+    "equity": 50033.0,
+    "profit": 0.0,
     "currency": "USD"
   },
   "trades_total": 1,
-  "trades_open": 1,
+  "trades_open": 0,
   "win_rate": 0,
   "total_pnl": 0,
-  "open_positions": [
-    {
-      "ticket": 1562594110,
-      "dir": "LONG",
-      "entry": 4452.23,
-      "profit": 16.0,
-      "lots": 1.0
-    }
-  ],
-  "active_trade": true,
-  "pending_signal": "buy",
-  "rsi_has_reset": true,
-  "cooldown_until": null,
+  "open_positions": [],
+  "active_trade": false,
+  "pending_signal": null,
+  "rsi_has_reset": false,
+  "cooldown_until": "01:56:00",
   "filters": {
     "rsi_jump_skip": "5-15",
     "session_skip": "Asian UTC 0-8"
   },
   "notion_logging": true,
-  "notion_trade_count": 0,
+  "notion_trade_count": 1,
   "bot_active": true,
   "bot_type": "RSI_SCALPER_V3.1"
 }
