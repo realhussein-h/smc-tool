@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "time": "2026-03-30 01:39:59",
+    "dir": "LONG",
+    "entry": 4452.23,
+    "rsi_trigger": 23.16,
+    "rsi_jump": 2.67,
+    "lots": 1.0,
+    "ticket": 1562594110,
+    "status": "OPEN",
+    "pnl": null,
+    "close_price": null,
+    "close_time": null
+  }
+]
