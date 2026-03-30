@@ -24,5 +24,18 @@
     "pnl": null,
     "close_price": null,
     "close_time": "2026-03-30 10:09:59"
+  },
+  {
+    "time": "2026-03-30 10:34:59",
+    "dir": "SHORT",
+    "entry": 4533.52,
+    "rsi_trigger": 63.44,
+    "rsi_jump": 3.97,
+    "lots": 1.0,
+    "ticket": 1563523662,
+    "status": "OPEN",
+    "pnl": null,
+    "close_price": null,
+    "close_time": null
   }
 ]
