@@ -1,18 +1,27 @@
 {
-  "last_scan": "2026-03-31 18:41:00",
+  "last_scan": "2026-03-31 18:42:01",
   "account": {
-    "balance": 51363.0,
-    "equity": 51363.0,
-    "profit": 0.0,
+    "balance": 51359.5,
+    "equity": 51374.5,
+    "profit": 15.0,
     "currency": "USD"
   },
-  "trades_total": 1,
-  "trades_open": 0,
+  "trades_total": 2,
+  "trades_open": 1,
   "win_rate": 0,
   "total_pnl": 0,
   "sl_hits_total": 0,
-  "open_positions": [],
-  "active_trade": false,
+  "open_positions": [
+    {
+      "ticket": 1567607329,
+      "dir": "SHORT",
+      "entry": 4647.06,
+      "profit": 15.0,
+      "lots": 1.0,
+      "sl": 4649.82
+    }
+  ],
+  "active_trade": true,
   "pending_signal": "sell",
   "rsi_has_reset": true,
   "cooldown_until": "16:11:11",
