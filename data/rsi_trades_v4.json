@@ -35,10 +35,10 @@
     "rsi_jump": 1.8,
     "lots": 1.0,
     "ticket": 1568150383,
-    "status": "OPEN",
+    "status": "Loss",
     "pnl": null,
     "close_price": null,
-    "close_time": null,
-    "sl_hit": null
+    "close_time": "2026-04-01 01:40:15",
+    "sl_hit": false
   }
 ]
