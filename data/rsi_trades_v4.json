@@ -40,5 +40,19 @@
     "close_price": null,
     "close_time": "2026-04-01 01:40:15",
     "sl_hit": false
+  },
+  {
+    "time": "2026-04-01 01:59:38",
+    "dir": "SHORT",
+    "entry": 4698.99,
+    "rsi_trigger": 68.35,
+    "rsi_jump": 1.83,
+    "lots": 1.0,
+    "ticket": 1568167510,
+    "status": "OPEN",
+    "pnl": null,
+    "close_price": null,
+    "close_time": null,
+    "sl_hit": null
   }
 ]
