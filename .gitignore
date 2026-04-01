@@ -1,0 +1,5 @@
+﻿rsi_scalper_v4.py
+smc_bot.py
+*.backup_*
+sync_log.txt
+deploy_log.txt
