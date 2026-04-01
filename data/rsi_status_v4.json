@@ -1,5 +1,5 @@
 {
-  "last_scan": "2026-04-01 21:43:01",
+  "last_scan": "2026-04-01 21:44:00",
   "account": {
     "balance": 50454.0,
     "equity": 50454.0,
@@ -14,7 +14,7 @@
   "open_positions": [],
   "active_trade": false,
   "pending_signal": null,
-  "rsi_has_reset": false,
+  "rsi_has_reset": true,
   "cooldown_until": "21:58:00",
   "filters": {
     "buy_min_jump": 3.0,
