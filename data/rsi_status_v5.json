@@ -1,5 +1,5 @@
 {
-  "last_scan": "2026-04-02 20:51:00",
+  "last_scan": "2026-04-02 20:52:00",
   "account": {
     "balance": 51250.0,
     "equity": 51250.0,
@@ -13,7 +13,7 @@
   "open_positions": [],
   "active_trade": false,
   "pending_signal": null,
-  "rsi_has_reset": false,
+  "rsi_has_reset": true,
   "cooldown_until": "21:05:00",
   "filters": {
     "sell": "RSI >= 67.0, dead zone 5-15",
